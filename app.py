@@ -56,21 +56,26 @@ def jogos_brasileirao():
     container = soup.find('div', class_='aside-content').find('ul', class_='list-unstyled')
     data = []
     for dataBox in container.find_all('li'):
-        jogo = dataBox.find('span', class_='partida-desc text-1 color-lightgray p-b-15 block uppercase text-center')
+        jogo = dataBox.find('span', class_='partida-desc text-1 color-lightgray p-b-15 block uppercase text-center').text.strip()
         timeCasaSigla = dataBox.find('div', class_='time pull-left').find('span', class_='time-sigla')
         timeCasaImg = dataBox.find('div', class_='time pull-left').find('img')
         timeForaSigla = dataBox.find('div', class_='time pull-right').find('span', class_='time-sigla')
         timeForaImg = dataBox.find('div', class_='time pull-right').find('img')
         descricao = dataBox.find('span', class_='partida-desc text-1 color-lightgray block uppercase text-center')
 
-        data.append({'jogo' : jogo.text.strip(),
+        aux = '''\r\n'''
+        for i in range(0,len(aux)):
+            jogo = jogo.replace(aux[i],'')
+
+        data.append({'jogo' : jogo,
                     'sigla_time_casa' : timeCasaSigla.text.strip(),
                     'escudo_time_casa' : timeCasaImg['src'],
                     'sigla_time_fora' : timeForaSigla.text.strip(),
                     'escudo_time_fora' : timeForaImg['src'],
                     'descricao' : descricao.text.strip()})
 
-    return jsonify({rodada: [{'jogos': data}]})
+    return jsonify({'rodada': rodada,
+                    'jogos': data})
 
 
 
