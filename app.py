@@ -61,18 +61,27 @@ def jogos_brasileirao():
         timeCasaImg = dataBox.find('div', class_='time pull-left').find('img')
         timeForaSigla = dataBox.find('div', class_='time pull-right').find('span', class_='time-sigla')
         timeForaImg = dataBox.find('div', class_='time pull-right').find('img')
-        descricao = dataBox.find('span', class_='partida-desc text-1 color-lightgray block uppercase text-center')
+        descricao = dataBox.find('span', class_='partida-desc text-1 color-lightgray block uppercase text-center').text.strip()
+        detalhes = dataBox.find('span', class_='partida-desc text-1 color-lightgray block uppercase text-center').find('a')
 
-        aux = '''\r\n'''
-        for i in range(0,len(aux)):
-            jogo = jogo.replace(aux[i],'')
+        #tratamento do conteudo jogo
+        aux = '\r\n'
+        jogo = jogo.replace(aux, '')
+
+        aux = '                          '
+        jogo = jogo.replace(aux, '')
+
+        #tratamento do conteudo descricao
+        aux = '\nDetalhes do jogo'
+        descricao = descricao.replace(aux, '')
 
         data.append({'jogo' : jogo,
                     'sigla_time_casa' : timeCasaSigla.text.strip(),
                     'escudo_time_casa' : timeCasaImg['src'],
                     'sigla_time_fora' : timeForaSigla.text.strip(),
                     'escudo_time_fora' : timeForaImg['src'],
-                    'descricao' : descricao.text.strip()})
+                    'descricao' : descricao,
+                    'detalhes' : detalhes['href']})
 
     return jsonify({'rodada': rodada,
                     'jogos': data})
