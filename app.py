@@ -31,6 +31,12 @@ def tabela_brasileirao():
             vitObj = lista_numeros[2]
             empObj = lista_numeros[3]
             derObj = lista_numeros[4]
+            golproObj = lista_numeros[5]
+            golcontraObj = lista_numeros[6]
+            saldoObj = lista_numeros[7]
+            c_amarelo = lista_numeros[8]
+            c_vermelho = lista_numeros[9]
+            aprovObj = lista_numeros[10]
 
         data.append({'posicao' : posObj.text.strip(),
                     'result' : result,
@@ -40,7 +46,13 @@ def tabela_brasileirao():
                     'jogos' : jogObj.text.strip(),
                     'vitorias' : vitObj.text.strip(),
                     'empates' : empObj.text.strip(),
-                    'derrotas' :  derObj.text.strip()})
+                    'derrotas' :  derObj.text.strip(),
+                    'gol_pro' : golproObj.text.strip(),
+                    'gol_contra' : golcontraObj.text.strip(),
+                    'saldo' : saldoObj.text.strip(),
+                    'cartao_amarelo' : c_amarelo.text.strip(),
+                    'cartao_vermelho' : c_vermelho.text.strip(),
+                    'aproveitamento' : aprovObj.text.strip()})
    
     return jsonify({'tabela': data})
 
@@ -61,7 +73,8 @@ def jogos_brasileirao():
         timeCasaImg = dataBox.find('div', class_='time pull-left').find('img')
         timeForaSigla = dataBox.find('div', class_='time pull-right').find('span', class_='time-sigla')
         timeForaImg = dataBox.find('div', class_='time pull-right').find('img')
-        descricao = dataBox.find('span', class_='partida-desc text-1 color-lightgray block uppercase text-center').text.strip()
+        placar = dataBox.find('strong', class_='partida-horario center-block').find('span')
+        local = dataBox.find('span', class_='partida-desc text-1 color-lightgray block uppercase text-center').text.strip()
         detalhes = dataBox.find('span', class_='partida-desc text-1 color-lightgray block uppercase text-center').find('a')
 
         #tratamento do conteudo jogo
@@ -71,16 +84,24 @@ def jogos_brasileirao():
         aux = '                          '
         jogo = jogo.replace(aux, '')
 
-        #tratamento do conteudo descricao
+        #tratamento do conteudo local
         aux = '\nDetalhes do jogo'
-        descricao = descricao.replace(aux, '')
+        local = local.replace(aux, '')
+        aux = '\nComo foi o jogo'
+        local = local.replace(aux, '')
+
+        #tratamento divisao de placar do jogo
+        timeCasaPlacar = placar.text.split('x')[0]
+        timeForaPlacar = placar.text.split('x')[1]
 
         data.append({'jogo' : jogo,
                     'sigla_time_casa' : timeCasaSigla.text.strip(),
                     'escudo_time_casa' : timeCasaImg['src'],
                     'sigla_time_fora' : timeForaSigla.text.strip(),
                     'escudo_time_fora' : timeForaImg['src'],
-                    'descricao' : descricao,
+                    'placar_time_casa' : timeCasaPlacar,
+                    'placar_time_fora' : timeForaPlacar,
+                    'local' : local,
                     'detalhes' : detalhes['href']})
 
     return jsonify({'rodada': rodada,
