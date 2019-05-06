@@ -10,7 +10,7 @@ app.config['JSON_AS_ASCII'] = False
 
 @app.route('/api/futebol/serie-a/tabela', methods=['GET'])
 def tabela_brasileirao():
-    html_doc = requests.get('https://www.cbf.com.br/futebol-brasileiro/competicoes/campeonato-brasileiro-serie-a')
+    html_doc = requests.get('https://www.cbf.com.br/futebol-brasileiro/competicoes/campeonato-brasileiro-serie-a/2019')
     soup = BeautifulSoup(html_doc.text, 'html.parser')
     data = []
     lista_numeros = []
@@ -60,22 +60,31 @@ def tabela_brasileirao():
 
 @app.route('/api/futebol/serie-a/jogos', methods=['GET'])
 def jogos_brasileirao():
-    html_doc = requests.get('https://www.cbf.com.br/futebol-brasileiro/competicoes/campeonato-brasileiro-serie-a')
+    html_doc = requests.get('https://www.cbf.com.br/futebol-brasileiro/competicoes/campeonato-brasileiro-serie-a/2019')
     soup = BeautifulSoup(html_doc.text, 'html.parser')
 
-
-    rodada = soup.find('h3', class_='text-center').text
-    container = soup.find('div', class_='aside-content').find('ul', class_='list-unstyled')
+    container = soup.find('aside', class_='aside-rodadas')
+    rodada = container.find('div', class_='swiper-slide active').find('h3', class_='text-center').text
+    rodada_ativa = container.find('div', class_='swiper-slide active').find('div', class_='aside-content').find('ul', class_='list-unstyled')
     data = []
-    for dataBox in container.find_all('li'):
+    for dataBox in rodada_ativa.find_all('li'):
         jogo = dataBox.find('span', class_='partida-desc text-1 color-lightgray p-b-15 block uppercase text-center').text.strip()
         timeCasaSigla = dataBox.find('div', class_='time pull-left').find('span', class_='time-sigla')
         timeCasaImg = dataBox.find('div', class_='time pull-left').find('img')
         timeForaSigla = dataBox.find('div', class_='time pull-right').find('span', class_='time-sigla')
         timeForaImg = dataBox.find('div', class_='time pull-right').find('img')
-        placar = dataBox.find('strong', class_='partida-horario center-block').find('span')
         local = dataBox.find('span', class_='partida-desc text-1 color-lightgray block uppercase text-center').text.strip()
         detalhes = dataBox.find('span', class_='partida-desc text-1 color-lightgray block uppercase text-center').find('a')
+
+
+        if dataBox.find('strong', class_='partida-horario center-block').find('span'):
+            placar = dataBox.find('strong', class_='partida-horario center-block').find('span')
+            #tratamento divisao de placar do jogo
+            timeCasaPlacar = placar.text.split('x')[0]
+            timeForaPlacar = placar.text.split('x')[1]
+        else:
+            timeCasaPlacar = ''
+            timeForaPlacar = ''
 
         #tratamento do conteudo jogo
         aux = '\r\n'
@@ -90,9 +99,9 @@ def jogos_brasileirao():
         aux = '\nComo foi o jogo'
         local = local.replace(aux, '')
 
-        #tratamento divisao de placar do jogo
-        timeCasaPlacar = placar.text.split('x')[0]
-        timeForaPlacar = placar.text.split('x')[1]
+        
+
+        
 
         data.append({'jogo' : jogo,
                     'sigla_time_casa' : timeCasaSigla.text.strip(),
