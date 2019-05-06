@@ -80,8 +80,8 @@ def jogos_brasileirao():
         if dataBox.find('strong', class_='partida-horario center-block').find('span'):
             placar = dataBox.find('strong', class_='partida-horario center-block').find('span')
             #tratamento divisao de placar do jogo
-            timeCasaPlacar = placar.text.split('x')[0]
-            timeForaPlacar = placar.text.split('x')[1]
+            timeCasaPlacar = placar.text.split(' x ')[0]
+            timeForaPlacar = placar.text.split(' x ')[1]
         else:
             timeCasaPlacar = ''
             timeForaPlacar = ''
@@ -89,7 +89,8 @@ def jogos_brasileirao():
         #tratamento do conteudo jogo
         aux = '\r\n'
         jogo = jogo.replace(aux, '')
-
+        aux = '                       1 alteração'
+        jogo = jogo.replace(aux, '')
         aux = '                          '
         jogo = jogo.replace(aux, '')
 
