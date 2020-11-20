@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 from flask import Flask, jsonify
+from flask_cors import CORS
 from bs4 import BeautifulSoup
 import requests, json, os, time
 
