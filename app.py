@@ -5,6 +5,7 @@ import requests, json, os, time
 
 
 app = Flask(__name__)
+CORS(app)
 app.config['JSON_AS_ASCII'] = False
 
 @app.route('/api/futebol/serie-a/tabela', methods=['GET'])
