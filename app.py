@@ -9,7 +9,7 @@ app.config['JSON_AS_ASCII'] = False
 
 @app.route('/api/futebol/serie-a/tabela', methods=['GET'])
 def tabela_brasileirao():
-    html_doc = requests.get('https://www.cbf.com.br/futebol-brasileiro/competicoes/campeonato-brasileiro-serie-a/2019')
+    html_doc = requests.get('https://www.cbf.com.br/futebol-brasileiro/competicoes/campeonato-brasileiro-serie-a/2020')
     time.sleep(2)
     soup = BeautifulSoup(html_doc.text, 'html.parser')
     data = []
@@ -60,7 +60,7 @@ def tabela_brasileirao():
 
 @app.route('/api/futebol/serie-a/jogos', methods=['GET'])
 def jogos_brasileirao():
-    html_doc = requests.get('https://www.cbf.com.br/futebol-brasileiro/competicoes/campeonato-brasileiro-serie-a/2019')
+    html_doc = requests.get('https://www.cbf.com.br/futebol-brasileiro/competicoes/campeonato-brasileiro-serie-a/2020')
     time.sleep(2)
     soup = BeautifulSoup(html_doc.text, 'html.parser')
 
