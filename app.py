@@ -13,7 +13,7 @@ todays_date = date.today()
 
 @app.route('/api/futebol/serie-a/tabela', methods=['GET'])
 def tabela_brasileirao():
-    html_doc = requests.get('https://www.cbf.com.br/futebol-brasileiro/competicoes/campeonato-brasileiro-serie-a/' + todays_date.year)
+    html_doc = requests.get('https://www.cbf.com.br/futebol-brasileiro/competicoes/campeonato-brasileiro-serie-a/' + str(todays_date.year))
     time.sleep(2)
     soup = BeautifulSoup(html_doc.text, 'html.parser')
     data = []
@@ -64,7 +64,7 @@ def tabela_brasileirao():
 
 @app.route('/api/futebol/serie-a/jogos', methods=['GET'])
 def jogos_brasileirao():
-    html_doc = requests.get('https://www.cbf.com.br/futebol-brasileiro/competicoes/campeonato-brasileiro-serie-a/' + todays_date.year)
+    html_doc = requests.get('https://www.cbf.com.br/futebol-brasileiro/competicoes/campeonato-brasileiro-serie-a/' + str(todays_date.year))
     time.sleep(2)
     soup = BeautifulSoup(html_doc.text, 'html.parser')
 
