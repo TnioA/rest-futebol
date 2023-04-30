@@ -69,58 +69,70 @@ def jogos_brasileirao():
     soup = BeautifulSoup(html_doc.text, 'html.parser')
 
     container = soup.find('aside', class_='aside-rodadas')
-    rodada = container.find('div', class_='swiper-slide active').find('h3', class_='text-center').text
-    rodada_ativa = container.find('div', class_='swiper-slide active').find('div', class_='aside-content').find('ul', class_='list-unstyled')
+    rodadas = container.find_all('div', class_='swiper-slide')
     data = []
-    for dataBox in rodada_ativa.find_all('li'):
-        jogo = dataBox.find('span', class_='partida-desc text-1 color-lightgray p-b-15 block uppercase text-center').text.strip()
-        timeCasaSigla = dataBox.find('div', class_='time pull-left').find('span', class_='time-sigla')
-        timeCasaImg = dataBox.find('div', class_='time pull-left').find('img')
-        timeForaSigla = dataBox.find('div', class_='time pull-right').find('span', class_='time-sigla')
-        timeForaImg = dataBox.find('div', class_='time pull-right').find('img')
-        local = dataBox.find('span', class_='partida-desc text-1 color-lightgray block uppercase text-center').text.strip()
-        detalhes = dataBox.find('span', class_='partida-desc text-1 color-lightgray block uppercase text-center').find('a')
+    #obter lista de rodadas
+    for rodada in rodadas:
+        numero_rodada = rodada.find('h3', class_='text-center').text
+        rodada_atual = 'active' in rodada['class']
+        
+        jogos_info = rodada.find('div', class_='aside-content').find('ul', class_='list-unstyled')
+        jogos = []
+        
+        #obter os jogos para cada rodada
+        for dataBox in jogos_info.find_all('li'):
+            jogo = dataBox.find('span', class_='partida-desc text-1 color-lightgray p-b-15 block uppercase text-center').text.strip()
+            timeCasaSigla = dataBox.find('div', class_='time pull-left').find('span', class_='time-sigla')
+            timeCasaImg = dataBox.find('div', class_='time pull-left').find('img')
+            timeForaSigla = dataBox.find('div', class_='time pull-right').find('span', class_='time-sigla')
+            timeForaImg = dataBox.find('div', class_='time pull-right').find('img')
+            local = dataBox.find('span', class_='partida-desc text-1 color-lightgray block uppercase text-center').text.strip()
+            detalhes = dataBox.find('span', class_='partida-desc text-1 color-lightgray block uppercase text-center').find('a')
 
+            if dataBox.find('strong', class_='partida-horario center-block').find('span'):
+                placar = dataBox.find('strong', class_='partida-horario center-block').find('span')
+                #tratamento divisao de placar do jogo
+                timeCasaPlacar = placar.text.split(' x ')[0]
+                timeForaPlacar = placar.text.split(' x ')[1]
+            else:
+                timeCasaPlacar = ''
+                timeForaPlacar = ''
 
-        if dataBox.find('strong', class_='partida-horario center-block').find('span'):
-            placar = dataBox.find('strong', class_='partida-horario center-block').find('span')
-            #tratamento divisao de placar do jogo
-            timeCasaPlacar = placar.text.split(' x ')[0]
-            timeForaPlacar = placar.text.split(' x ')[1]
-        else:
-            timeCasaPlacar = ''
-            timeForaPlacar = ''
+            #tratamento do conteudo jogo
+            aux = '\r\n'
+            jogo = jogo.replace(aux, '')
+            aux = '                       1 alteração'
+            jogo = jogo.replace(aux, '')
+            aux = '                       2 alterações'
+            jogo = jogo.replace(aux, '')
+            aux = '                          '
+            jogo = jogo.replace(aux, '')
 
-        #tratamento do conteudo jogo
-        aux = '\r\n'
-        jogo = jogo.replace(aux, '')
-        aux = '                       1 alteração'
-        jogo = jogo.replace(aux, '')
-        aux = '                       2 alterações'
-        jogo = jogo.replace(aux, '')
-        aux = '                          '
-        jogo = jogo.replace(aux, '')
+            #tratamento do conteudo local
+            aux = '\nDetalhes do jogo'
+            local = local.replace(aux, '')
+            aux = '\nComo foi o jogo'
+            local = local.replace(aux, '')
 
-        #tratamento do conteudo local
-        aux = '\nDetalhes do jogo'
-        local = local.replace(aux, '')
-        aux = '\nComo foi o jogo'
-        local = local.replace(aux, '')
+            jogos.append({
+                'jogo' : jogo,
+                'sigla_time_casa' : timeCasaSigla.text.strip(),
+                'escudo_time_casa' : timeCasaImg['src'],
+                'sigla_time_fora' : timeForaSigla.text.strip(),
+                'escudo_time_fora' : timeForaImg['src'],
+                'placar_time_casa' : timeCasaPlacar,
+                'placar_time_fora' : timeForaPlacar,
+                'local' : local,
+                'detalhes' : detalhes['href']
+            })
 
         data.append({
-            'jogo' : jogo,
-            'sigla_time_casa' : timeCasaSigla.text.strip(),
-            'escudo_time_casa' : timeCasaImg['src'],
-            'sigla_time_fora' : timeForaSigla.text.strip(),
-            'escudo_time_fora' : timeForaImg['src'],
-            'placar_time_casa' : timeCasaPlacar,
-            'placar_time_fora' : timeForaPlacar,
-            'local' : local,
-            'detalhes' : detalhes['href']
+            'rodada': numero_rodada,
+            'rodada_atual': rodada_atual,
+            'jogos': jogos
         })
 
-    return jsonify({'rodada': rodada,
-                    'jogos': data})
+    return jsonify({'rodadas': data})
 
 @app.route('/api/futebol/serie-a/noticias', methods=['GET'])
 def noticias_brasileirao():
